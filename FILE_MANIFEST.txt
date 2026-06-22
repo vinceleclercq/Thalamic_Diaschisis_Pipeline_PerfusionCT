@@ -1,15 +1,16 @@
-function Extract_ROI_Thalamus_001()
-%EXTRACT_ROI_THALAMUS_001 Historical wrapper for thalamic ROI extraction.
-%
-% This wrapper preserves the original script name while using the
-% refactored, configurable pipeline.
+# SHA-256 file manifest
+# Generated after checking that each filename contains the expected file type.
 
-repo_root = fileparts(mfilename('fullpath'));
-addpath(fullfile(repo_root, 'src'));
-
-cfg = load_pipeline_config(repo_root);
-setup_environment(cfg);
-
-extract_thalamic_tmax(cfg);
-validate_pipeline_outputs(cfg);
-end
+99f3d7376f02d9dc867ac68d4870da9418ac2bef91d3aee9ac0c23bf5401e764  .gitignore
+c391e22a0d6561da5d3eb63059e64317392bc0b86f5de06c588ee7813f4920c0  .zenodo.json
+a703e71819d143acd0fe12f81b44baf3e12ce31fb53cc53c30a35428986973de  CHANGELOG.md
+436b5f8f12fda9be205d209165f9af1c30d1b0f60746b81edeed4028d4883037  CITATION.cff
+567e74227ba9ab6a812d65e50b49b25cbcbfdd6725f6dd10d1ffe3d647282cba  Extract_ROI_Thalamus_001.m
+ad88282ddc3a3a762ff41141089ca445395bd3e15bc5efb9b5af3808c8a554b1  LICENSE
+c2c0a5a11f614301b90ab6391c5ce8c9b4eba7e9637b96830ec2438ed668f93b  PerfCT_Reg_MNI_001.m
+9044c9db74fed04b9c322c6dc1958101d526b669ef37ef75bb9654cd5029405d  README.md
+9f359a21875bb31389c0ebb905b398e875a54245706ebd5bc246dcb18012d98f  VERIFICATION_REPORT.md
+7f8c0a4b376e289e6eceb6924d5d5571bd48d71b848f66f374a1ad8d6a768194  config/example_config.m
+6bbf18195955650274ddb5c93d732cfd0ae9ff149d7956045a7ee5a19df2404b  docs/GITHUB_ZENODO_STEPS.md
+d62c0e24ec339cbd03779df5f43fb0e651772433fbdc7e30a7597550873a7d08  docs/METHODS_TEXT.md
+5f44da03c7d8179c709dacf93c029c435b41ad843383aeb9c69dec15d8c85d56  run_all.m
