@@ -1,40 +1,30 @@
-# Local configuration
-config/local_config.m
-
-# MATLAB temporary files
-*.asv
-*.autosave
-*.m~
-
-# Patient imaging and source data
-*.dcm
-*.ima
-*.nii
-*.nii.gz
-*.nrrd
-*.mha
-*.mhd
-*.raw
-
-# Patient-level tabular and MATLAB data
-*.csv
-*.tsv
-*.xlsx
-*.xls
-*.mat
-*.rds
-
-# Logs and local results
-*.log
-Group_results/
-Results/
-results/
-
-# Operating-system files
-Thumbs.db
-.DS_Store
-desktop.ini
-
-# Editor folders
-.vscode/
-.idea/
+{
+  "title": "Thalamic diaschisis CT perfusion pipeline",
+  "upload_type": "software",
+  "description": "MATLAB pipeline for DICOM conversion, CT-Tmax coregistration, CTseg-based spatial normalization, validity-mask propagation, AAL thalamic ROI resampling, and bilateral thalamic Tmax extraction.",
+  "creators": [
+    {
+      "name": "Leclercq, Vincent"
+    },
+    {
+      "name": "Gaspard, Nicolas"
+    },
+    {
+      "name": "Naeije, Gilles"
+    }
+  ],
+  "access_right": "open",
+  "license": "mit",
+  "version": "1.0.1",
+  "keywords": [
+    "ischemic stroke",
+    "CT perfusion",
+    "Tmax",
+    "thalamus",
+    "diaschisis",
+    "MATLAB",
+    "SPM",
+    "CTseg",
+    "FieldTrip"
+  ]
+}
