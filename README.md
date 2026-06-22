@@ -1,182 +1,134 @@
-# Thalamic diaschisis CT perfusion pipeline
+# Guide de démarrage rapide
 
-## Overview
+## 1. Préparer le dossier du projet
 
-This repository contains the MATLAB code used to:
+Décompressez le dossier `thalamic-diaschisis-pipeline-v1.0.0` dans un emplacement distinct des données patients.
 
-1. convert anatomical CT and CT-perfusion Tmax DICOM series to NIfTI;
-2. coregister Tmax maps to anatomical CT;
-3. normalize the maps to CTseg template space;
-4. create subject-level validity masks and group maps;
-5. resample the AAL atlas onto the normalized Tmax grid;
-6. extract bilateral thalamic Tmax measurements.
+Ne placez jamais les DICOM, NIfTI, tableaux cliniques ou résultats patients dans le dépôt GitHub.
 
-The pipeline was developed for the study:
+## 2. Créer la configuration locale
 
-> **Thalamic Tmax Asymmetry, Acute EEG Abnormalities, and Seizure Outcomes After Middle Cerebral Artery Ischemic Stroke**
-
-No patient-level clinical or imaging data are included.
-
-## Repository structure
-
-```text
-thalamic-diaschisis-pipeline/
-├── run_all.m
-├── PerfCT_Reg_MNI_001.m
-├── Extract_ROI_Thalamus_001.m
-├── config/
-│   └── example_config.m
-├── src/
-│   ├── load_pipeline_config.m
-│   ├── setup_environment.m
-│   ├── convert_dicom_to_nifti.m
-│   ├── register_tmax_to_template.m
-│   ├── create_group_maps.m
-│   ├── extract_thalamic_tmax.m
-│   └── validate_pipeline_outputs.m
-├── docs/
-│   ├── METHODS_TEXT.md
-│   ├── OUTPUTS.md
-│   └── ZENODO_RELEASE_CHECKLIST.md
-├── CITATION.cff
-├── .zenodo.json
-├── .gitignore
-├── CHANGELOG.md
-└── LICENSE
-```
-
-## Requirements
-
-- MATLAB R2021a or later recommended
-- SPM12
-- CTseg, including:
-  - `spm_CTseg.m`
-  - `mu_CTseg.nii`
-- FieldTrip
-- AAL atlas distributed with FieldTrip:
-  - `template/atlas/aal/ROI_MNI_V4.nii`
-
-## Expected input structure
-
-```text
-CT_perf/
-├── Sub001/
-│   ├── ANAT/
-│   │   └── [anatomical CT DICOM files]
-│   └── Perf_T/
-│       └── [Tmax DICOM files]
-├── Sub002/
-│   ├── ANAT/
-│   └── Perf_T/
-└── ...
-```
-
-Subject directories must match the pattern configured in `cfg.subject_pattern`, which defaults to `Sub*`.
-
-## Installation
-
-1. Download or clone this repository.
-2. Copy:
+Copiez :
 
 ```text
 config/example_config.m
 ```
 
-to:
+et renommez la copie :
 
 ```text
 config/local_config.m
 ```
 
-3. Edit `config/local_config.m` and set the local paths to:
-   - the patient-data root directory;
-   - SPM12;
-   - CTseg;
-   - FieldTrip.
-
-`local_config.m` is ignored by Git and must not be uploaded.
-
-## Running the complete pipeline
-
-In MATLAB:
+Dans `local_config.m`, adaptez les quatre chemins obligatoires :
 
 ```matlab
-cd('PATH_TO_REPOSITORY')
+cfg.root_dir      = 'D:\Vincent\CT_perf';
+cfg.spm_dir       = 'C:\...\spm12';
+cfg.ctseg_dir     = 'C:\...\CTseg';
+cfg.fieldtrip_dir = 'C:\...\fieldtrip';
+```
+
+Vérifiez que `cfg.ctseg_dir` contient ou permet de trouver :
+
+```text
+spm_CTseg.m
+mu_CTseg.nii
+```
+
+## 3. Vérifier les données d’entrée
+
+Chaque patient doit avoir une structure similaire à :
+
+```text
+D:\Vincent\CT_perf\
+├── Sub001\
+│   ├── ANAT\
+│   └── Perf_T\
+├── Sub002\
+│   ├── ANAT\
+│   └── Perf_T\
+└── ...
+```
+
+Les dossiers `ANAT` et `Perf_T` contiennent les fichiers DICOM correspondants.
+
+## 4. Lancer le pipeline complet
+
+Dans MATLAB :
+
+```matlab
+cd('CHEMIN\VERS\thalamic-diaschisis-pipeline-v1.0.0')
 run_all
 ```
 
-The three processing stages are executed sequentially:
+Le pipeline réalise successivement :
 
-```matlab
-convert_dicom_to_nifti(cfg)
-register_tmax_to_template(cfg)
-extract_thalamic_tmax(cfg)
-```
+1. la conversion DICOM vers NIfTI ;
+2. le recalage et la normalisation ;
+3. la création des masques et cartes de groupe ;
+4. l’extraction des valeurs Tmax thalamiques ;
+5. des contrôles automatiques de cohérence.
 
-A final validation report is then generated.
+## 5. Lancer uniquement une partie
 
-## Running the historical entry points
-
-The two original script names are retained as wrappers:
+Conversion et normalisation :
 
 ```matlab
 PerfCT_Reg_MNI_001
+```
+
+Extraction thalamique :
+
+```matlab
 Extract_ROI_Thalamus_001
 ```
 
-`PerfCT_Reg_MNI_001` performs DICOM conversion, registration, normalization, and group-map creation.
+## 6. Vérifier les résultats
 
-`Extract_ROI_Thalamus_001` performs bilateral thalamic ROI extraction.
-
-## Main outputs
-
-By default, outputs are written to:
+Ouvrez :
 
 ```text
-CT_perf/Group_results/
+D:\Vincent\CT_perf\Group_results\
 ```
 
-The principal outputs are:
+Vérifiez notamment :
 
 ```text
-processing_summary.csv
 dicom_conversion_summary.csv
-Sub001_wfTmax.nii
-Sub001_mask.nii
-group_sum_wfTmax.nii
-group_count_valid.nii
-group_mean_wfTmax.nii
-group_coverage_fraction.nii
-group_subjects.txt
+processing_summary.csv
 thalamus_CT_values.csv
-thalamus_CT_results.mat
 pipeline_validation_report.txt
 ```
 
-See `docs/OUTPUTS.md` for details.
+Il faut ensuite contrôler visuellement :
 
-## Quality control
+- le recalage CT–Tmax ;
+- la normalisation ;
+- l’absence d’inversion gauche–droite ;
+- la couverture des deux thalamus ;
+- les masques de validité.
 
-Automated checks do not replace visual review. Before analysis, inspect:
+## 7. Comparer aux résultats historiques
 
-- anatomical CT–Tmax coregistration;
-- left–right orientation;
-- normalization to CTseg template space;
-- coverage of both thalami;
-- subject masks;
-- the processing summary for errors;
-- agreement of the final thalamic values with the original analysis dataset.
+Avant publication du code :
 
+- vérifiez que les 62 patients sont présents ;
+- comparez les moyennes thalamiques avec le fichier ayant servi à l’analyse ;
+- vérifiez l’index d’asymétrie ;
+- refaites les figures ;
+- documentez toute différence.
 
-## Important reproducibility choices
+## 8. GitHub
 
-- Tmax is treated as a contrast-arrival-delay measure, not as absolute cerebral blood flow.
-- The native validity mask is defined using a configurable lower threshold, set by default to `Tmax > -100`, matching the original processing script.
-- ROI extraction uses both the propagated validity mask and finite values.
-- To reproduce the original study, non-positive Tmax values are excluded by default during ROI extraction.
-- AAL labels are resampled using nearest-neighbour interpolation.
-- Continuous Tmax data are resampled using trilinear interpolation.
+Le fichier suivant ne doit jamais être envoyé sur GitHub :
 
-## Intended use
+```text
+config/local_config.m
+```
 
-Research and reproducibility only. The code has not been validated for clinical decision-making.
+Le fichier `.gitignore` empêche normalement son ajout, ainsi que celui des fichiers d’imagerie et des résultats patients.
+
+## 9. Limite importante
+
+Les scripts ont été refactorisés à partir du code original, mais n’ont pas pu être exécutés ici avec MATLAB, SPM, CTseg et FieldTrip. Une validation locale complète est indispensable avant de créer la release GitHub `v1.0.0`.

@@ -1,0 +1,40 @@
+# Local configuration
+config/local_config.m
+
+# MATLAB temporary files
+*.asv
+*.autosave
+*.m~
+
+# Patient imaging and source data
+*.dcm
+*.ima
+*.nii
+*.nii.gz
+*.nrrd
+*.mha
+*.mhd
+*.raw
+
+# Patient-level tabular and MATLAB data
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.mat
+*.rds
+
+# Logs and local results
+*.log
+Group_results/
+Results/
+results/
+
+# Operating-system files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Editor folders
+.vscode/
+.idea/

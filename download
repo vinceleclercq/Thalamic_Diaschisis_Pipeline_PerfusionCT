@@ -1,0 +1,157 @@
+function report = validate_pipeline_outputs(cfg)
+%VALIDATE_PIPELINE_OUTPUTS Perform non-visual consistency checks.
+
+fprintf('\n============================================================\n');
+fprintf('FINAL AUTOMATED VALIDATION\n');
+fprintf('============================================================\n');
+
+subjects = dir(fullfile(cfg.root_dir, cfg.subject_pattern));
+subjects = subjects([subjects.isdir]);
+subjects = subjects(~ismember({subjects.name}, {'.', '..'}));
+subject_names = sort({subjects.name});
+
+maps = dir(fullfile(cfg.group_dir, '*_wfTmax.nii'));
+map_names = sort({maps.name});
+map_subjects = cellfun(@(x) erase(x, '_wfTmax.nii'), ...
+    map_names, 'UniformOutput', false);
+
+missing_maps = setdiff(subject_names, map_subjects);
+missing_masks = {};
+
+for i = 1:numel(map_subjects)
+    mask_file = fullfile(cfg.group_dir, ...
+        [map_subjects{i} '_mask.nii']);
+    if ~exist(mask_file, 'file')
+        missing_masks{end+1,1} = map_subjects{i}; %#ok<AGROW>
+    end
+end
+
+processing_summary_file = fullfile(cfg.group_dir, ...
+    'processing_summary.csv');
+processing_errors = {};
+
+if exist(processing_summary_file, 'file')
+    T = readtable(processing_summary_file, ...
+        'Delimiter', cfg.csv_delimiter, ...
+        'TextType', 'string');
+    if ismember('Status', T.Properties.VariableNames)
+        error_rows = startsWith(T.Status, "ERROR");
+        processing_errors = cellstr(T.Subject(error_rows));
+    end
+end
+
+thalamus_file = fullfile(cfg.group_dir, ...
+    'thalamus_CT_values.csv');
+n_thalamus_rows = 0;
+n_thalamus_errors = 0;
+n_missing_means = 0;
+
+if exist(thalamus_file, 'file')
+    Tthal = readtable(thalamus_file, ...
+        'Delimiter', cfg.csv_delimiter, ...
+        'TextType', 'string');
+    n_thalamus_rows = height(Tthal);
+
+    if ismember('Status', Tthal.Properties.VariableNames)
+        n_thalamus_errors = nnz(startsWith(Tthal.Status, "ERROR"));
+    end
+
+    if all(ismember({'Thal_L_Mean', 'Thal_R_Mean'}, ...
+            Tthal.Properties.VariableNames))
+        n_missing_means = nnz( ...
+            isnan(Tthal.Thal_L_Mean) | isnan(Tthal.Thal_R_Mean));
+    end
+end
+
+warnings_list = {};
+
+if ~isempty(cfg.expected_subject_count) && ...
+        numel(subject_names) ~= cfg.expected_subject_count
+    warnings_list{end+1} = sprintf( ...
+        'Found %d subject folders; expected %d.', ...
+        numel(subject_names), cfg.expected_subject_count); %#ok<AGROW>
+end
+
+if ~isempty(missing_maps)
+    warnings_list{end+1} = sprintf( ...
+        '%d subject(s) have no final normalized Tmax map.', ...
+        numel(missing_maps)); %#ok<AGROW>
+end
+if ~isempty(missing_masks)
+    warnings_list{end+1} = sprintf( ...
+        '%d normalized Tmax map(s) have no paired mask.', ...
+        numel(missing_masks)); %#ok<AGROW>
+end
+if ~isempty(processing_errors)
+    warnings_list{end+1} = sprintf( ...
+        '%d subject(s) have processing errors.', ...
+        numel(processing_errors)); %#ok<AGROW>
+end
+if n_thalamus_errors > 0
+    warnings_list{end+1} = sprintf( ...
+        '%d subject(s) have ROI-extraction errors.', ...
+        n_thalamus_errors); %#ok<AGROW>
+end
+if n_missing_means > 0
+    warnings_list{end+1} = sprintf( ...
+        '%d subject(s) have missing left or right thalamic means.', ...
+        n_missing_means); %#ok<AGROW>
+end
+
+report = struct();
+report.subject_folders = numel(subject_names);
+report.normalized_maps = numel(map_subjects);
+report.thalamus_rows = n_thalamus_rows;
+report.missing_maps = missing_maps;
+report.missing_masks = missing_masks;
+report.processing_errors = processing_errors;
+report.warnings = warnings_list;
+
+report_file = fullfile(cfg.group_dir, ...
+    'pipeline_validation_report.txt');
+fid = fopen(report_file, 'w');
+if fid < 0
+    error('Could not write validation report: %s', report_file);
+end
+cleanup_fid = onCleanup(@() fclose(fid)); %#ok<NASGU>
+
+fprintf(fid, 'THALAMIC DIASCHISIS PIPELINE VALIDATION REPORT\n');
+fprintf(fid, 'Generated: %s\n\n', datestr(now)); %#ok<DATST>
+fprintf(fid, 'Subject folders: %d\n', report.subject_folders);
+fprintf(fid, 'Final normalized maps: %d\n', report.normalized_maps);
+fprintf(fid, 'Rows in thalamic output: %d\n\n', report.thalamus_rows);
+
+write_list(fid, 'Subjects missing normalized maps', missing_maps);
+write_list(fid, 'Subjects missing masks', missing_masks);
+write_list(fid, 'Subjects with processing errors', processing_errors);
+write_list(fid, 'Warnings', warnings_list);
+
+fprintf(fid, '\nIMPORTANT:\n');
+fprintf(fid, ['Automated validation does not replace visual inspection ' ...
+    'of coregistration, normalization, laterality, thalamic coverage, ' ...
+    'and agreement with the original study dataset.\n']);
+
+fprintf('Subject folders       : %d\n', report.subject_folders);
+fprintf('Final normalized maps : %d\n', report.normalized_maps);
+fprintf('Thalamic output rows  : %d\n', report.thalamus_rows);
+
+if isempty(warnings_list)
+    fprintf('Automated checks found no warning.\n');
+else
+    fprintf(2, 'Automated checks generated %d warning(s).\n', ...
+        numel(warnings_list));
+end
+fprintf('Validation report written to:\n%s\n', report_file);
+end
+
+function write_list(fid, title_text, values)
+fprintf(fid, '%s:\n', title_text);
+if isempty(values)
+    fprintf(fid, '  None\n\n');
+else
+    for i = 1:numel(values)
+        fprintf(fid, '  - %s\n', values{i});
+    end
+    fprintf(fid, '\n');
+end
+end

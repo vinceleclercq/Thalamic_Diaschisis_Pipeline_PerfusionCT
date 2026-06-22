@@ -1,0 +1,80 @@
+# Output files
+
+## Subject-level files
+
+Created in each subject folder during processing:
+
+- `<Subject>_Anat.nii`  
+  Anatomical CT converted from DICOM.
+
+- `<Subject>_Perf_T.nii`  
+  Tmax map converted from DICOM.
+
+- `f_<Subject>_Perf_T.nii`  
+  Float32 rewrite of the original Tmax map.
+
+- `mask_f_<Subject>_Perf_T.nii`  
+  Native validity mask.
+
+- `rf_<Subject>_Perf_T.nii`  
+  Tmax map resliced to the anatomical CT grid.
+
+- `rmask_f_<Subject>_Perf_T.nii`  
+  Validity mask resliced to the anatomical CT grid.
+
+- `wrf_<Subject>_Perf_T.nii`  
+  Tmax map warped to CTseg template space.
+
+- `wrmask_f_<Subject>_Perf_T.nii`  
+  Propagated validity mask before final binarization.
+
+- `<Subject>_mask.nii`  
+  Final binary validity mask in template space.
+
+Intermediate files may be retained for quality control or removed by setting:
+
+```matlab
+cfg.cleanup_intermediate_files = true;
+```
+
+## Group-results files
+
+- `dicom_conversion_summary.csv`  
+  Conversion status and output paths.
+
+- `processing_summary.csv`  
+  Registration status, paths, and numerical quality-control values.
+
+- `<Subject>_wfTmax.nii`  
+  Final normalized subject Tmax map copied into `Group_results`.
+
+- `<Subject>_mask.nii`  
+  Paired normalized validity mask.
+
+- `group_sum_wfTmax.nii`  
+  Sum of valid subject Tmax values.
+
+- `group_count_valid.nii`  
+  Number of subjects contributing at each voxel.
+
+- `group_mean_wfTmax.nii`  
+  Mean Tmax across contributing subjects.
+
+- `group_coverage_fraction.nii`  
+  Proportion of included subjects contributing at each voxel.
+
+- `group_subjects.txt`  
+  Subjects included in the group maps.
+
+- `thalamus_CT_values.csv`  
+  Bilateral thalamic summary statistics and ROI coverage.
+
+- `thalamus_CT_results.mat`  
+  Optional local output including voxel-level values.
+
+- `pipeline_validation_report.txt`  
+  Automated consistency checks.
+
+## Files that must not be uploaded publicly
+
+Do not upload any subject-level output, clinical spreadsheet, image, CSV, MAT file, or local path configuration to GitHub.

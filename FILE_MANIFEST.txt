@@ -1,0 +1,15 @@
+function Extract_ROI_Thalamus_001()
+%EXTRACT_ROI_THALAMUS_001 Historical wrapper for thalamic ROI extraction.
+%
+% This wrapper preserves the original script name while using the
+% refactored, configurable pipeline.
+
+repo_root = fileparts(mfilename('fullpath'));
+addpath(fullfile(repo_root, 'src'));
+
+cfg = load_pipeline_config(repo_root);
+setup_environment(cfg);
+
+extract_thalamic_tmax(cfg);
+validate_pipeline_outputs(cfg);
+end

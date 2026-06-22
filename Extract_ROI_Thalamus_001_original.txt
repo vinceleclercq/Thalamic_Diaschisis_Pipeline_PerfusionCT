@@ -1,0 +1,42 @@
+# GitHub and Zenodo release checklist
+
+## Before making the repository public
+
+- [ ] Copy `config/example_config.m` to `config/local_config.m`.
+- [ ] Configure all local paths.
+- [ ] Run the complete pipeline on the final study cohort.
+- [ ] Confirm the expected number of subjects.
+- [ ] Review `dicom_conversion_summary.csv`.
+- [ ] Review `processing_summary.csv`.
+- [ ] Perform visual CT–Tmax coregistration quality control.
+- [ ] Perform visual normalization quality control.
+- [ ] Verify left–right orientation.
+- [ ] Verify bilateral thalamic coverage.
+- [ ] Confirm `thalamus_CT_values.csv` reproduces the original analysis values.
+- [ ] Confirm no patient data or local configuration is tracked.
+- [ ] Obtain agreement from all code contributors.
+- [ ] Confirm the software licence with the institution.
+- [ ] Replace `YOUR-USERNAME` placeholders.
+- [ ] Update software versions in the README and manuscript.
+- [ ] Update `CITATION.cff`.
+- [ ] Update `.zenodo.json`.
+
+## GitHub
+
+- [ ] Create a private repository.
+- [ ] Upload the repository contents.
+- [ ] Inspect the repository online for accidental patient data.
+- [ ] Ask a collaborator to reproduce the pipeline from the README.
+- [ ] Make the repository public only after approval.
+
+## Zenodo
+
+- [ ] Connect the GitHub account to Zenodo.
+- [ ] Enable the repository in Zenodo.
+- [ ] Create the GitHub release tag `v1.0.0`.
+- [ ] Publish the release.
+- [ ] Verify that Zenodo archives it.
+- [ ] Copy the version-specific DOI.
+- [ ] Copy the concept DOI if desired.
+- [ ] Add the DOI badge and citation to the README.
+- [ ] Add the DOI to the manuscript.
