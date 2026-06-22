@@ -5,13 +5,15 @@ type: software
 
 authors:
 
-* family-names: "Gaspard"
-  given-names: "Nicolas"
-* family-names: "Naeije"
-  given-names: "Gilles"
-* family-names: "Leclercq"
-  given-names: "Vincent"
-  orcid: "https://orcid.org/0009-0006-6534-8819"
+  - family-names: "Leclercq"
+    given-names: "Vincent"
+    orcid: "https://orcid.org/0009-0006-6534-8819"
+  - family-names: "Gaspard"
+    given-names: "Nicolas"
+    orcid: "https://orcid.org/0000-0003-1148-6723"
+  - family-names: "Naeije"
+    given-names: "Gilles"
+    orcid: "https://orcid.org/0000-0003-1580-1970"
 
 version: 1.0.0
 date-released: 2026-06-22
