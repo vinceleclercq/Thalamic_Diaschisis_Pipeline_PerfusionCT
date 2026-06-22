@@ -1,27 +1,14 @@
-{
-  "title": "Thalamic diaschisis CT perfusion pipeline",
-  "upload_type": "software",
-  "description": "MATLAB pipeline for DICOM conversion, CT\u2013Tmax coregistration, CTseg-based spatial normalization, validity-mask propagation, AAL thalamic ROI resampling, and bilateral thalamic Tmax extraction after middle cerebral artery ischemic stroke.",
-  "creators": [
-    {
-      "name": "Leclercq, Vincent"
-    },
-    {
-      "name": "Gaspard, Nicolas"
-    }
-  ],
-  "access_right": "open",
-  "license": "mit",
-  "keywords": [
-    "ischemic stroke",
-    "CT perfusion",
-    "Tmax",
-    "thalamus",
-    "diaschisis",
-    "MATLAB",
-    "SPM",
-    "CTseg",
-    "FieldTrip"
-  ],
-  "version": "1.0.0"
-}
+# Changelog
+
+## Version 1.0.0 — 2026-06-22
+
+- Refactored the original monolithic MATLAB scripts into configurable functions.
+- Removed hard-coded personal paths.
+- Added a local configuration template.
+- Added historical wrapper functions preserving the original script names.
+- Added propagated validity-mask use during ROI extraction.
+- Preserved exclusion of non-positive Tmax values to reproduce the original study.
+- Added automated geometry checks.
+- Added processing summaries and a final validation report.
+- Added group sum, count, mean, and coverage maps.
+- Added README, code-availability text, citation metadata, and Zenodo checklist.
